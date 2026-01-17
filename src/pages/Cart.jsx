@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { skincareProducts } from '../data/products';
-import { sendToTelegram } from '../services/telegramService';
+import { sendToTelegram } from '../services/TelegramService';
 
 const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart, openProductDetail }) => {
   const [notification, setNotification] = useState(null);
   const [recommendedProducts, setRecommendedProducts] = useState([]);
   const [customerName, setCustomerName] = useState('Guest');
-  
+
   const cartTotal = cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
   const shippingCost = cartTotal > 50 ? 0 : 5.99;
   const tax = cartTotal * 0.08; // 8% tax
@@ -18,7 +18,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
       top: 0,
       behavior: 'smooth'
     });
-    
+
     // Get customer name from localStorage if available
     const savedName = localStorage.getItem('customerName');
     if (savedName) {
@@ -32,29 +32,29 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
       const availableProducts = skincareProducts.filter(
         product => !cartItems.some(item => item.id === product.id)
       );
-      
+
       const cartCategories = [...new Set(cartItems.map(item => item.category))];
-      
+
       let recommendations = availableProducts.filter(
         product => !cartCategories.includes(product.category)
       );
-      
+
       if (recommendations.length < 4) {
         const sameCategoryProducts = availableProducts.filter(
           product => cartCategories.includes(product.category)
         ).slice(0, 4 - recommendations.length);
-        
+
         recommendations = [...recommendations, ...sameCategoryProducts];
       }
-      
+
       if (recommendations.length < 4) {
         const remainingProducts = availableProducts
           .filter(p => !recommendations.some(r => r.id === p.id))
           .slice(0, 4 - recommendations.length);
-        
+
         recommendations = [...recommendations, ...remainingProducts];
       }
-      
+
       return recommendations.slice(0, 4);
     };
 
@@ -69,14 +69,14 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
   // Custom add to cart function with notification
   const handleAddToCart = (product) => {
     addToCart(product);
-    
+
     setNotification({
       message: `Added ${product.name} to cart!`,
       productName: product.name,
       productPrice: product.price,
       productImage: product.image
     });
-    
+
     setTimeout(() => {
       setNotification(null);
     }, 3000);
@@ -88,7 +88,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
       top: 0,
       behavior: 'smooth'
     });
-    
+
     setTimeout(() => {
       openProductDetail(product);
     }, 100);
@@ -100,7 +100,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
       top: 0,
       behavior: 'smooth'
     });
-    
+
     setNotification(null);
     navigateTo('cart');
   };
@@ -129,7 +129,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
 
       // Send to Telegram
       const telegramResponse = await sendToTelegram(cartData, 'cart_checkout');
-      
+
       if (telegramResponse) {
         // Show success notification
         setNotification({
@@ -138,7 +138,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
           productPrice: orderTotal,
           productImage: ''
         });
-        
+
         setTimeout(() => {
           setNotification(null);
         }, 3000);
@@ -160,7 +160,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
       top: 0,
       behavior: 'smooth'
     });
-    
+
     setTimeout(() => {
       navigateTo('products');
     }, 100);
@@ -182,13 +182,13 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
           <p className="text-dark mb-8 max-w-md mx-auto">
             Looks like you haven't added any skincare products to your cart yet.
           </p>
-          <button 
+          <button
             onClick={() => {
               window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
               });
-              
+
               setTimeout(() => {
                 navigateTo('products');
               }, 100);
@@ -212,8 +212,8 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
               <div className="flex-shrink-0">
                 <div className="w-12 h-12 bg-primary rounded-lg overflow-hidden mr-3">
                   {notification.productImage ? (
-                    <img 
-                      src={notification.productImage} 
+                    <img
+                      src={notification.productImage}
                       alt={notification.productName}
                       className="w-full h-full object-cover"
                       onError={(e) => {
@@ -231,7 +231,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
               <div className="flex-1">
                 <div className="flex justify-between items-start">
                   <h4 className="font-semibold text-dark">{notification.message}</h4>
-                  <button 
+                  <button
                     onClick={() => setNotification(null)}
                     className="text-gray-400 hover:text-dark"
                   >
@@ -255,7 +255,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
               </div>
             </div>
             <div className="mt-3 pt-3 border-t">
-              <button 
+              <button
                 onClick={handleViewCart}
                 className="w-full bg-accent text-white py-2 rounded-lg font-medium hover:bg-opacity-90 transition duration-300 text-sm"
               >
@@ -268,7 +268,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
 
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold text-dark mb-8">Shopping Cart</h1>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2">
@@ -294,7 +294,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                   Your order details will be sent to our team via Telegram for immediate processing.
                 </p>
               </div>
-              
+
               {/* Table Header */}
               <div className="hidden md:grid grid-cols-12 gap-4 p-6 border-b bg-primary">
                 <div className="col-span-6 font-semibold text-dark">Product</div>
@@ -302,19 +302,19 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                 <div className="col-span-2 font-semibold text-dark text-center">Quantity</div>
                 <div className="col-span-2 font-semibold text-dark text-center">Total</div>
               </div>
-              
+
               {/* Cart Items */}
               {cartItems.map((item) => (
                 <div key={item.id} className="p-6 border-b">
                   <div className="flex items-center">
                     {/* Product Image - Clickable */}
-                    <div 
+                    <div
                       className="w-20 h-20 bg-primary rounded-lg overflow-hidden flex items-center justify-center mr-6 cursor-pointer"
                       onClick={() => handleProductClick(item)}
                     >
                       {item.image ? (
-                        <img 
-                          src={item.image} 
+                        <img
+                          src={item.image}
                           alt={item.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
@@ -326,12 +326,12 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                         <div className="text-2xl text-secondary">✨</div>
                       )}
                     </div>
-                    
+
                     {/* Product Info */}
                     <div className="flex-grow">
                       <div className="flex flex-col md:flex-row md:items-center">
                         <div className="md:w-1/2 mb-4 md:mb-0">
-                          <h3 
+                          <h3
                             className="font-semibold text-dark text-lg cursor-pointer hover:text-accent transition duration-300"
                             onClick={() => handleProductClick(item)}
                           >
@@ -339,23 +339,23 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                           </h3>
                           <p className="text-sm text-dark">{item.category} • {item.skinType}</p>
                         </div>
-                        
+
                         {/* Price */}
                         <div className="md:w-1/6 text-center mb-4 md:mb-0">
                           <span className="font-semibold text-dark">${item.price.toFixed(2)}</span>
                         </div>
-                        
+
                         {/* Quantity Controls */}
                         <div className="md:w-1/6 flex justify-center mb-4 md:mb-0">
                           <div className="flex items-center border rounded-lg">
-                            <button 
+                            <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
                               className="px-3 py-2 text-dark hover:text-accent"
                             >
                               -
                             </button>
                             <span className="px-3 py-2">{item.quantity}</span>
-                            <button 
+                            <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
                               className="px-3 py-2 text-dark hover:text-accent"
                             >
@@ -363,13 +363,13 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                             </button>
                           </div>
                         </div>
-                        
+
                         {/* Total & Remove */}
                         <div className="md:w-1/6 flex items-center justify-between md:justify-center">
                           <span className="font-semibold text-accent">
                             ${(item.price * item.quantity).toFixed(2)}
                           </span>
-                          <button 
+                          <button
                             onClick={() => removeFromCart(item.id)}
                             className="md:hidden text-dark hover:text-red-500 ml-4"
                           >
@@ -378,10 +378,10 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                             </svg>
                           </button>
                         </div>
-                        
+
                         {/* Remove Button (Desktop) */}
                         <div className="hidden md:block md:w-1/12 text-center">
-                          <button 
+                          <button
                             onClick={() => removeFromCart(item.id)}
                             className="text-dark hover:text-red-500"
                           >
@@ -395,10 +395,10 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                   </div>
                 </div>
               ))}
-              
+
               {/* Continue Shopping */}
               <div className="p-6">
-                <button 
+                <button
                   onClick={handleContinueShopping}
                   className="text-accent font-semibold hover:text-opacity-80 transition duration-300 flex items-center"
                 >
@@ -410,31 +410,31 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
               </div>
             </div>
           </div>
-          
+
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
               <h2 className="text-xl font-bold text-dark mb-6">Order Summary</h2>
-              
+
               {/* Summary Details */}
               <div className="space-y-4 mb-6">
                 <div className="flex justify-between">
                   <span className="text-dark">Subtotal</span>
                   <span className="font-semibold text-dark">${cartTotal.toFixed(2)}</span>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span className="text-dark">Shipping</span>
                   <span className="font-semibold text-dark">
                     {shippingCost === 0 ? 'FREE' : `$${shippingCost.toFixed(2)}`}
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span className="text-dark">Tax (8%)</span>
                   <span className="font-semibold text-dark">${tax.toFixed(2)}</span>
                 </div>
-                
+
                 <div className="border-t pt-4">
                   <div className="flex justify-between text-lg font-bold">
                     <span className="text-dark">Total</span>
@@ -442,13 +442,13 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                   </div>
                 </div>
               </div>
-              
+
               {/* Promo Code */}
               <div className="mb-6">
                 <label className="block text-dark font-medium mb-2">Promo Code</label>
                 <div className="flex">
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     placeholder="Enter code"
                     className="flex-grow px-4 py-3 border rounded-l-lg text-dark"
                   />
@@ -457,7 +457,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                   </button>
                 </div>
               </div>
-              
+
               {/* Telegram Notification */}
               <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-start">
@@ -471,9 +471,9 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                   </div>
                 </div>
               </div>
-              
+
               {/* Checkout Button */}
-              <button 
+              <button
                 onClick={handleCheckout}
                 className="w-full bg-accent text-white py-4 rounded-lg font-semibold text-lg hover:bg-opacity-90 transition duration-300 mb-4 flex items-center justify-center"
               >
@@ -482,11 +482,11 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                 </svg>
                 Proceed to Checkout
               </button>
-              
+
               <p className="text-center text-sm text-dark">
                 Free shipping on orders over $50
               </p>
-              
+
               {/* Payment Methods */}
               <div className="mt-6 pt-6 border-t">
                 <p className="text-dark mb-3">We accept:</p>
@@ -507,17 +507,17 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
           <div className="mt-16 pt-12 border-t">
             <h2 className="text-3xl font-bold text-dark mb-8">You Might Also Like</h2>
             <p className="text-dark mb-8">Complete your skincare routine with these essentials:</p>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {recommendedProducts.map((product) => (
-                <div 
-                  key={product.id} 
+                <div
+                  key={product.id}
                   className="bg-white rounded-xl shadow-md p-4 hover:shadow-lg transition duration-300 cursor-pointer group"
                   onClick={() => handleProductClick(product)}
                 >
                   <div className="h-40 bg-primary rounded-lg mb-4 overflow-hidden">
-                    <img 
-                      src={product.image} 
+                    <img
+                      src={product.image}
                       alt={product.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
@@ -528,7 +528,7 @@ const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart
                   </div>
                   <h3 className="font-semibold text-dark mb-2">{product.name}</h3>
                   <p className="text-accent font-bold mb-3">${product.price.toFixed(2)}</p>
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleAddToCart(product);

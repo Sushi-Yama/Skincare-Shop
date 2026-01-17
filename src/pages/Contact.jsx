@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { sendContactFormToTelegram } from '../services/telegramService';
+import { sendContactFormToTelegram } from '../services/TelegramService';
 
 const Contact = ({ navigateTo }) => {
   const [formData, setFormData] = useState({
@@ -91,11 +91,11 @@ const Contact = ({ navigateTo }) => {
 
       // Send to Telegram
       const telegramResponse = await sendContactFormToTelegram(contactData);
-      
+
       if (telegramResponse) {
         setTelegramSent(true);
         console.log('Contact form submitted and sent to Telegram:', formData);
-        
+
         // Show success state
         setIsSubmitted(true);
         setFormData({
@@ -143,7 +143,7 @@ const Contact = ({ navigateTo }) => {
             <p className="text-xl text-dark mb-8">
               Have questions about our products, your skin, or anything else? Our team of skincare experts is ready to assist you.
             </p>
-            
+
             {/* Telegram Notification */}
             {telegramSent && (
               <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 animate-slide-in-down">
@@ -178,19 +178,19 @@ const Contact = ({ navigateTo }) => {
             {/* Contact Form */}
             <div>
               <h3 className="text-2xl font-bold text-dark mb-6">Send Us a Message</h3>
-              
+
               {isSubmitted ? (
                 <div className="bg-green-50 border border-green-200 rounded-xl p-8 text-center">
                   <div className="text-5xl mb-4">✅</div>
                   <h4 className="text-xl font-semibold text-dark mb-2">Message Sent Successfully!</h4>
                   <p className="text-dark mb-4">
-                    {telegramSent 
+                    {telegramSent
                       ? "Your message has been sent to our team via Telegram. We'll get back to you within 24 hours."
                       : "Thank you for contacting us. Our team will get back to you within 24 hours."
                     }
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                    <button 
+                    <button
                       onClick={() => {
                         setIsSubmitted(false);
                         setTelegramSent(false);
@@ -199,7 +199,7 @@ const Contact = ({ navigateTo }) => {
                     >
                       Send another message
                     </button>
-                    <button 
+                    <button
                       onClick={() => navigateTo('products')}
                       className="text-dark font-medium hover:text-accent transition duration-300"
                     >
@@ -305,11 +305,10 @@ const Contact = ({ navigateTo }) => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full py-3 px-8 rounded-lg font-semibold text-lg transition duration-300 flex items-center justify-center ${
-                      isSubmitting 
-                        ? 'bg-gray-400 cursor-not-allowed' 
+                    className={`w-full py-3 px-8 rounded-lg font-semibold text-lg transition duration-300 flex items-center justify-center ${isSubmitting
+                        ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-accent text-white hover:bg-opacity-90'
-                    }`}
+                      }`}
                   >
                     {isSubmitting ? (
                       <>
@@ -344,7 +343,7 @@ const Contact = ({ navigateTo }) => {
                     </div>
                   ))}
                 </div>
-                <button 
+                <button
                   onClick={() => navigateTo('products')}
                   className="mt-6 text-accent font-medium hover:text-opacity-80 transition duration-300 flex items-center"
                 >
@@ -371,7 +370,7 @@ const Contact = ({ navigateTo }) => {
                     </p>
                   </div>
                 </div>
-                <button 
+                <button
                   onClick={() => {
                     window.open('https://maps.google.com/?q=123+Skincare+Ave+San+Francisco+CA', '_blank');
                   }}
@@ -417,8 +416,8 @@ const Contact = ({ navigateTo }) => {
               Subscribe to our newsletter for skincare tips, new product launches, and exclusive offers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <input 
-                type="email" 
+              <input
+                type="email"
                 placeholder="Your email address"
                 className="flex-grow px-4 py-3 rounded-lg text-dark"
               />
@@ -448,9 +447,9 @@ const Contact = ({ navigateTo }) => {
               { name: 'YouTube', icon: '📹', color: 'bg-red-100', textColor: 'text-red-600' },
               { name: 'TikTok', icon: '🎵', color: 'bg-black', textColor: 'text-white' }
             ].map((social, index) => (
-              <a 
+              <a
                 key={index}
-                href="#" 
+                href="#"
                 className="group transform hover:-translate-y-1 transition duration-300"
               >
                 <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-2 ${social.color} group-hover:shadow-lg transition duration-300`}>

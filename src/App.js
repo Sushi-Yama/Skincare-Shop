@@ -12,15 +12,12 @@ import SkinTypes from './pages/SkinTypes';
 import Routines from './pages/Routines';
 import Footer from './components/Footer';
 import CartSidebar from './components/CartSidebar';
-import { sendTestMessage } from './services/telegramService';
+import { sendTestMessage } from './services/TelegramService';
 import './App.css';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem('cartItems');
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const [cartItems, setCartItems] = useState([]); // Changed: removed localStorage load
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [telegramConnected, setTelegramConnected] = useState(false);
@@ -56,10 +53,10 @@ function App() {
     testTelegram();
   }, []);
 
-  // Save cart items to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('cartItems', JSON.stringify(cartItems));
-  }, [cartItems]);
+  // Save cart items to localStorage whenever they change - REMOVED
+  // useEffect(() => {
+  //   localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  // }, [cartItems]);
 
   const addToCart = (product) => {
     setCartItems(prevItems => {
@@ -99,7 +96,7 @@ function App() {
   // Clear cart after successful order
   const clearCart = () => {
     setCartItems([]);
-    localStorage.removeItem('cartItems');
+    // localStorage.removeItem('cartItems'); // Removed because we are not using localStorage
   };
 
   const navigateTo = (page) => {
