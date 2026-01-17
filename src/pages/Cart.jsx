@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { skincareProducts } from '../data/products';
-import { sendToTelegram } from '../services/TelegramService';
+import { sendToTelegram } from '../services/telegramService';
 
 const Cart = ({ cartItems, updateQuantity, removeFromCart, navigateTo, addToCart, openProductDetail }) => {
   const [notification, setNotification] = useState(null);

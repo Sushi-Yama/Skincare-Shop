@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { sendContactFormToTelegram } from '../services/TelegramService';
+import { sendContactFormToTelegram } from '../services/telegramService';
 
 const Contact = ({ navigateTo }) => {
   const [formData, setFormData] = useState({
@@ -306,8 +306,8 @@ const Contact = ({ navigateTo }) => {
                     type="submit"
                     disabled={isSubmitting}
                     className={`w-full py-3 px-8 rounded-lg font-semibold text-lg transition duration-300 flex items-center justify-center ${isSubmitting
-                        ? 'bg-gray-400 cursor-not-allowed'
-                        : 'bg-accent text-white hover:bg-opacity-90'
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-accent text-white hover:bg-opacity-90'
                       }`}
                   >
                     {isSubmitting ? (

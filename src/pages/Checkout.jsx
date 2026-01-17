@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { sendToTelegram } from '../services/TelegramService';
+import { sendToTelegram } from '../services/telegramService';
 
 const Checkout = ({ cartItems, cartTotal, navigateTo }) => {
   const [step, setStep] = useState(1);
