@@ -1,7 +1,10 @@
 import axios from 'axios';
 
-const BOT_TOKEN = '8021765963:AAE6fEJVY4ILfM0q9VJyCJnO_FM_NO0dNk0';
-const CHAT_ID = '5900380633';
+// const BOT_TOKEN = '8021765963:AAE6fEJVY4ILfM0q9VJyCJnO_FM_NO0dNk0';
+// const CHAT_ID = '5900380633';
+
+const BOT_TOKEN = process.env.REACT_APP_BOT_TOKEN;
+const CHAT_ID = process.env.REACT_APP_CHAT_ID;
 
 export const sendToTelegram = async (data, type = 'cart_checkout') => {
  try {
